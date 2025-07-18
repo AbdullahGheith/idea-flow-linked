@@ -544,14 +544,15 @@ export default function LinkedInIdeaPad() {
                     <div className="flex items-start justify-between">
                       <div className="flex-1">
                         <CardTitle className="text-lg line-clamp-2">{idea.ideaOrDraft}</CardTitle>
-                        <div className="flex items-center flex-wrap gap-2 mt-2">
-                          {idea.postGoal && <Badge variant="secondary">{idea.postGoal}</Badge>}
-                          {idea.tone && <Badge variant="outline">{idea.tone}</Badge>}
-                          {idea.targetAudience && <Badge className="bg-primary/10 text-primary hover:bg-primary/20">{idea.targetAudience}</Badge>}
-                          <span className="text-sm text-muted-foreground">
-                            {new Date(idea.timestamp).toLocaleDateString()}
-                          </span>
-                        </div>
+                         <div className="flex items-center flex-wrap gap-2 mt-2">
+                           {idea.postGoal && <Badge variant="secondary">{idea.postGoal}</Badge>}
+                           {idea.tone && <Badge variant="outline">{idea.tone}</Badge>}
+                           {idea.targetAudience && <Badge className="bg-primary/10 text-primary hover:bg-primary/20">{idea.targetAudience}</Badge>}
+                           {idea.profile && <Badge className="bg-accent text-accent-foreground">{idea.profile}</Badge>}
+                           <span className="text-sm text-muted-foreground">
+                             {new Date(idea.timestamp).toLocaleDateString()}
+                           </span>
+                         </div>
                       </div>
                       <div className="flex space-x-2">
                         <Button
