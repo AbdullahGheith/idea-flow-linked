@@ -153,10 +153,10 @@ export default function LinkedInIdeaPad() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          "x-make-apikey": apiKey,
         },
         mode: "no-cors",
         body: JSON.stringify({
-          apiKey: apiKey,
           ideaOrDraft: idea.ideaOrDraft,
           postGoal: idea.postGoal,
           tone: idea.tone,
