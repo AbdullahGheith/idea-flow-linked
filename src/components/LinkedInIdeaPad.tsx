@@ -155,7 +155,6 @@ export default function LinkedInIdeaPad() {
           "Content-Type": "application/json",
           "x-make-apikey": apiKey,
         },
-        mode: "no-cors",
         body: JSON.stringify({
           ideaOrDraft: idea.ideaOrDraft,
           postGoal: idea.postGoal,
@@ -170,15 +169,29 @@ export default function LinkedInIdeaPad() {
         }),
       });
 
-      toast({
-        title: "Idea Sent to Make.com",
-        description: "Your LinkedIn idea has been sent to your Make.com scenario. Check your automation flow!",
-      });
+      if (response.ok) {
+        toast({
+          title: "Idea Sent to Make.com",
+          description: "Your LinkedIn idea has been sent to your Make.com scenario successfully!",
+        });
+      } else if (response.status === 401) {
+        toast({
+          title: "Authentication Error",
+          description: "Invalid API key. Please check your API key in settings.",
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: `Error ${response.status}`,
+          description: "Failed to send idea to Make.com. Please check your webhook URL and API key.",
+          variant: "destructive",
+        });
+      }
     } catch (error) {
       console.error("Error triggering Make.com webhook:", error);
       toast({
-        title: "Error",
-        description: "Failed to send idea to Make.com. Please check your webhook URL.",
+        title: "Network Error",
+        description: "Failed to connect to Make.com. Please check your internet connection and webhook URL.",
         variant: "destructive",
       });
     } finally {
