@@ -218,6 +218,15 @@ export default function LinkedInIdeaPad() {
       return;
     }
 
+    if (!newIdea.profile.trim()) {
+      toast({
+        title: "Missing Information", 
+        description: "Please select a profile.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     const idea: IdeaItem = {
       id: Date.now().toString(),
       ideaOrDraft: newIdea.ideaOrDraft,
@@ -463,7 +472,7 @@ export default function LinkedInIdeaPad() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <Label htmlFor="profile">Profile</Label>
+                <Label htmlFor="profile">Profile (required)</Label>
                 <select
                   id="profile"
                   value={newIdea.profile}
