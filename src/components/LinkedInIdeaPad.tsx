@@ -485,6 +485,54 @@ export default function LinkedInIdeaPad() {
                 onChange={(e) => setNewIdea({ ...newIdea, ideaOrDraft: e.target.value })}
                 rows={3}
               />
+              {newIdea.ideaOrDraft.trim() && (
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="mt-2"
+                  onClick={async () => {
+                    try {
+                      setIsLoading(true);
+                      const response = await fetch('https://hook.eu2.make.com/2ypmffht4y8yurpeordogjbnrxldm52x', {
+                        method: "POST",
+                        headers: {
+                          "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({
+                          draftContent: newIdea.ideaOrDraft,
+                          timestamp: new Date().toISOString(),
+                          source: "LinkedIn Idea Pad - Populate Fields"
+                        }),
+                      });
+
+                      if (response.ok) {
+                        toast({
+                          title: "Content Sent",
+                          description: "Draft content sent to Make.com for field population.",
+                        });
+                      } else {
+                        toast({
+                          title: "Error",
+                          description: "Failed to send content to Make.com.",
+                          variant: "destructive",
+                        });
+                      }
+                    } catch (error) {
+                      console.error("Error calling webhook:", error);
+                      toast({
+                        title: "Network Error",
+                        description: "Failed to connect to Make.com.",
+                        variant: "destructive",
+                      });
+                    } finally {
+                      setIsLoading(false);
+                    }
+                  }}
+                  disabled={isLoading}
+                >
+                  {isLoading ? 'Sending...' : 'Populate Fields'}
+                </Button>
+              )}
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
