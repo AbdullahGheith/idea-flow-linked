@@ -32,7 +32,7 @@ export default function LinkedInIdeaPad() {
     preferredFormat: '', 
     additionalNotes: '' 
   });
-  const [webhookUrl, setWebhookUrl] = useState('');
+  const [webhookUrl, setWebhookUrl] = useState('https://hook.eu2.make.com/pylsegmoba8j7bo3falxl36wdzztzuhr');
   const [isLoading, setIsLoading] = useState(false);
   const [apiKey, setApiKey] = useState('');
   const [tempApiKey, setTempApiKey] = useState('');
