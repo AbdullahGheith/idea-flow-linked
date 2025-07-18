@@ -18,6 +18,7 @@ interface IdeaItem {
   targetAudience: string;
   keywords: string;
   preferredFormat: string;
+  profile: string;
   additionalNotes: string;
   timestamp: string;
 }
@@ -31,6 +32,7 @@ export default function LinkedInIdeaPad() {
     targetAudience: '', 
     keywords: '', 
     preferredFormat: '', 
+    profile: '', 
     additionalNotes: '' 
   });
   const [webhookUrl, setWebhookUrl] = useState('https://hook.eu2.make.com/pylsegmoba8j7bo3falxl36wdzztzuhr');
@@ -72,6 +74,11 @@ export default function LinkedInIdeaPad() {
     'Stock photo',
     'Meme',
     'Screenshot'
+  ];
+
+  const profiles = [
+    'Default',
+    'MJM'
   ];
 
   // Load data from localStorage on mount
@@ -162,6 +169,7 @@ export default function LinkedInIdeaPad() {
           targetAudience: idea.targetAudience,
           keywords: idea.keywords,
           preferredFormat: idea.preferredFormat,
+          profile: idea.profile,
           additionalNotes: idea.additionalNotes,
           timestamp: idea.timestamp,
           source: "LinkedIn Idea Pad",
@@ -218,6 +226,7 @@ export default function LinkedInIdeaPad() {
       targetAudience: newIdea.targetAudience,
       keywords: newIdea.keywords,
       preferredFormat: newIdea.preferredFormat,
+      profile: newIdea.profile,
       additionalNotes: newIdea.additionalNotes,
       timestamp: new Date().toISOString(),
     };
@@ -231,6 +240,7 @@ export default function LinkedInIdeaPad() {
       targetAudience: '', 
       keywords: '', 
       preferredFormat: '', 
+      profile: '', 
       additionalNotes: '' 
     });
 
@@ -446,6 +456,23 @@ export default function LinkedInIdeaPad() {
                   <option value="">Select format</option>
                   {creativeFormats.map((format) => (
                     <option key={format} value={format}>{format}</option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="profile">Profile</Label>
+                <select
+                  id="profile"
+                  value={newIdea.profile}
+                  onChange={(e) => setNewIdea({ ...newIdea, profile: e.target.value })}
+                  className="w-full px-3 py-2 border border-input bg-card rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-ring z-50 relative"
+                >
+                  <option value="">Select profile</option>
+                  {profiles.map((profile) => (
+                    <option key={profile} value={profile}>{profile}</option>
                   ))}
                 </select>
               </div>
