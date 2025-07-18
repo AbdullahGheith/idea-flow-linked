@@ -497,6 +497,7 @@ export default function LinkedInIdeaPad() {
                         method: "POST",
                         headers: {
                           "Content-Type": "application/json",
+                          "x-make-apikey": apiKey,
                         },
                         body: JSON.stringify({
                           draftContent: newIdea.ideaOrDraft,
