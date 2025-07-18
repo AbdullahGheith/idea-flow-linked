@@ -65,13 +65,13 @@ export default function LinkedInIdeaPad() {
     'Newcomers to the field'
   ];
 
-  const preferredFormats = [
-    'Text post',
-    'Image + caption',
-    'Screenshot with commentary',
-    'Meme idea',
-    'Quote graphic',
-    'Short video idea'
+  const creativeFormats = [
+    'AI can choose',
+    'Selfie-style',
+    'AI-generated image',
+    'Stock photo',
+    'Meme',
+    'Screenshot'
   ];
 
   // Load data from localStorage on mount
@@ -423,7 +423,7 @@ export default function LinkedInIdeaPad() {
               </div>
 
               <div>
-                <Label htmlFor="preferredFormat">Preferred Format</Label>
+                <Label htmlFor="preferredFormat">Creative Format</Label>
                 <select
                   id="preferredFormat"
                   value={newIdea.preferredFormat}
@@ -431,7 +431,7 @@ export default function LinkedInIdeaPad() {
                   className="w-full px-3 py-2 border border-input bg-card rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-ring z-50 relative"
                 >
                   <option value="">Select format</option>
-                  {preferredFormats.map((format) => (
+                  {creativeFormats.map((format) => (
                     <option key={format} value={format}>{format}</option>
                   ))}
                 </select>
