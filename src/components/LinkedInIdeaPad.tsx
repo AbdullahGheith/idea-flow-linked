@@ -372,18 +372,18 @@ export default function LinkedInIdeaPad() {
           {/* Header */}
           <div className="bg-gradient-hero shadow-elegant">
             <div className="container mx-auto px-4 py-6">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-3">
-                  <div className="p-2 bg-white/20 rounded-lg backdrop-blur-sm">
-                    <Lightbulb className="h-8 w-8 text-white" />
+              <div className="flex items-center justify-between flex-wrap gap-4">
+                <div className="flex items-center space-x-2 md:space-x-3">
+                  <div className="p-1.5 md:p-2 bg-white/20 rounded-lg backdrop-blur-sm">
+                    <Lightbulb className="h-6 w-6 md:h-8 md:w-8 text-white" />
                   </div>
                   <div>
-                    <h1 className="text-2xl font-bold text-white">LinkedIn Idea Pad</h1>
-                    <p className="text-white/80">Capture ideas and trigger Make.com automations</p>
+                    <h1 className="text-lg md:text-2xl font-bold text-white">LinkedIn Idea Pad</h1>
+                    <p className="text-xs md:text-base text-white/80 hidden sm:block">Capture ideas and trigger Make.com automations</p>
                   </div>
                 </div>
                 
-                <div className="flex items-center space-x-2">
+                <div className="flex items-center space-x-1 md:space-x-2">
                   <Button 
                     variant="secondary" 
                     size="sm" 
@@ -396,17 +396,18 @@ export default function LinkedInIdeaPad() {
                   <Button 
                     variant="secondary" 
                     size="sm" 
-                    className="bg-white/20 backdrop-blur-sm border-white/20 text-white hover:bg-white/30"
+                    className="bg-white/20 backdrop-blur-sm border-white/20 text-white hover:bg-white/30 text-xs md:text-sm"
                     onClick={reenterApiKey}
                   >
-                    Change API Key
+                    <span className="hidden sm:inline">Change API Key</span>
+                    <span className="sm:hidden">API</span>
                   </Button>
                   
                   <Dialog>
                     <DialogTrigger asChild>
-                      <Button variant="secondary" size="sm" className="bg-white/20 backdrop-blur-sm border-white/20 text-white hover:bg-white/30">
-                        <Settings className="h-4 w-4 mr-2" />
-                        Settings
+                      <Button variant="secondary" size="sm" className="bg-white/20 backdrop-blur-sm border-white/20 text-white hover:bg-white/30 text-xs md:text-sm">
+                        <Settings className="h-4 w-4 md:mr-2" />
+                        <span className="hidden md:inline">Settings</span>
                       </Button>
                     </DialogTrigger>
                     <DialogContent>
