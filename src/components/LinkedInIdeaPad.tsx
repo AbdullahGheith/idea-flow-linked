@@ -17,6 +17,7 @@ interface IdeaItem {
   tone: string;
   targetAudience: string;
   segment?: string;
+  theme?: string;
   keywords: string;
   preferredFormat: string;
   profile: string;
@@ -32,6 +33,7 @@ export default function LinkedInIdeaPad() {
     tone: '', 
     targetAudience: '', 
     segment: '',
+    theme: '',
     keywords: '', 
     preferredFormat: '', 
     profile: '', 
@@ -96,6 +98,23 @@ export default function LinkedInIdeaPad() {
       'Sommerhus'
     ]
   };
+
+  const mjmThemes = [
+    'Opfriskning af hjemmet',
+    'Klargøring før salg',
+    'Børnevenlige malerløsninger',
+    'Nybyggeri & maling fra start',
+    'Vedligeholdelse af ejendomme',
+    'Professionelle kontorløsninger',
+    'Butiksindretning & showroom',
+    'Maling til hoteller & restauranter',
+    'Samarbejde med byggefirmaer',
+    'Malerarbejdets rolle i totalentrepriser',
+    'Kvalitet i større byggeprojekter',
+    'Samarbejde på tværs af faggrupper',
+    'Entreprenørens guide',
+    'Personligt brand'
+  ];
 
   const creativeFormats = [
     'AI can choose',
@@ -198,6 +217,7 @@ export default function LinkedInIdeaPad() {
           tone: idea.tone,
           targetAudience: idea.targetAudience,
           segment: idea.segment,
+          theme: idea.theme,
           keywords: idea.keywords,
           preferredFormat: idea.preferredFormat,
           profile: idea.profile,
@@ -265,6 +285,7 @@ export default function LinkedInIdeaPad() {
       tone: newIdea.tone,
       targetAudience: newIdea.targetAudience,
       segment: newIdea.segment,
+      theme: newIdea.theme,
       keywords: newIdea.keywords,
       preferredFormat: newIdea.preferredFormat,
       profile: newIdea.profile,
@@ -280,6 +301,7 @@ export default function LinkedInIdeaPad() {
       tone: '', 
       targetAudience: '', 
       segment: '',
+      theme: '',
       keywords: '', 
       preferredFormat: '', 
       profile: '', 
@@ -440,7 +462,8 @@ export default function LinkedInIdeaPad() {
                     profile: newProfile,
                     // Reset dependent fields when profile changes
                     targetAudience: '',
-                    segment: ''
+                    segment: '',
+                    theme: ''
                   });
                 }}
                 className="w-full px-3 py-2 border border-input bg-card rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-ring z-50 relative"
@@ -562,6 +585,23 @@ export default function LinkedInIdeaPad() {
               </div>
             </div>
 
+            {newIdea.profile === 'MJM' && (
+              <div>
+                <Label htmlFor="theme">Theme</Label>
+                <select
+                  id="theme"
+                  value={newIdea.theme}
+                  onChange={(e) => setNewIdea({ ...newIdea, theme: e.target.value })}
+                  className="w-full px-3 py-2 border border-input bg-card rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-ring z-50 relative"
+                >
+                  <option value="">Select theme</option>
+                  {mjmThemes.map((theme) => (
+                    <option key={theme} value={theme}>{theme}</option>
+                  ))}
+                </select>
+              </div>
+            )}
+
             <div>
               <Label htmlFor="keywords">Keywords or Hashtags (optional)</Label>
               <Input
@@ -624,6 +664,7 @@ export default function LinkedInIdeaPad() {
                            {idea.tone && <Badge variant="outline">{idea.tone}</Badge>}
                            {idea.targetAudience && <Badge className="bg-primary/10 text-primary hover:bg-primary/20">{idea.targetAudience}</Badge>}
                            {idea.segment && <Badge variant="outline">{idea.segment}</Badge>}
+                           {idea.theme && <Badge className="bg-secondary text-secondary-foreground">{idea.theme}</Badge>}
                            {idea.profile && <Badge className="bg-accent text-accent-foreground">{idea.profile}</Badge>}
                            <span className="text-sm text-muted-foreground">
                              {new Date(idea.timestamp).toLocaleDateString()}
