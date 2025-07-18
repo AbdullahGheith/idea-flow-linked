@@ -11,23 +11,62 @@ import { Label } from "@/components/ui/label";
 
 interface IdeaItem {
   id: string;
-  title: string;
-  content: string;
-  category: string;
+  ideaOrDraft: string;
+  postGoal: string;
+  tone: string;
+  targetAudience: string;
+  keywords: string;
+  preferredFormat: string;
+  additionalNotes: string;
   timestamp: string;
 }
 
 export default function LinkedInIdeaPad() {
   const [ideas, setIdeas] = useState<IdeaItem[]>([]);
-  const [newIdea, setNewIdea] = useState({ title: '', content: '', category: '' });
+  const [newIdea, setNewIdea] = useState({ 
+    ideaOrDraft: '', 
+    postGoal: '', 
+    tone: '', 
+    targetAudience: '', 
+    keywords: '', 
+    preferredFormat: '', 
+    additionalNotes: '' 
+  });
   const [webhookUrl, setWebhookUrl] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
 
-  // Categories for LinkedIn posts
-  const categories = [
-    'Industry Insights', 'Personal Growth', 'Leadership', 'Tech Trends', 
-    'Career Tips', 'Networking', 'Motivation', 'Business Strategy'
+  // Form options
+  const postGoals = [
+    'Share a personal experience',
+    'Demonstrate expertise',
+    'Spark discussion',
+    'Promote something (e.g. event, course)',
+    'Inspire / reflect'
+  ];
+
+  const tones = [
+    'Personal / informal',
+    'Reflective',
+    'Light / humorous',
+    'Bold / opinionated'
+  ];
+
+  const targetAudiences = [
+    'Cybersecurity students',
+    'Security professionals',
+    'Founders / startup people',
+    'Tech-curious followers',
+    'Newcomers to the field'
+  ];
+
+  const preferredFormats = [
+    'Text post',
+    'Image + caption',
+    'Screenshot with commentary',
+    'Meme idea',
+    'Quote graphic',
+    'Short video idea'
   ];
 
   // Load data from localStorage on mount
@@ -76,9 +115,13 @@ export default function LinkedInIdeaPad() {
         },
         mode: "no-cors",
         body: JSON.stringify({
-          title: idea.title,
-          content: idea.content,
-          category: idea.category,
+          ideaOrDraft: idea.ideaOrDraft,
+          postGoal: idea.postGoal,
+          tone: idea.tone,
+          targetAudience: idea.targetAudience,
+          keywords: idea.keywords,
+          preferredFormat: idea.preferredFormat,
+          additionalNotes: idea.additionalNotes,
           timestamp: idea.timestamp,
           source: "LinkedIn Idea Pad",
           platform: "LinkedIn"
@@ -103,10 +146,10 @@ export default function LinkedInIdeaPad() {
 
   // Add new idea
   const addIdea = async () => {
-    if (!newIdea.title.trim() || !newIdea.content.trim()) {
+    if (!newIdea.ideaOrDraft.trim()) {
       toast({
         title: "Missing Information",
-        description: "Please fill in both title and content for your idea.",
+        description: "Please fill in the idea or draft field.",
         variant: "destructive",
       });
       return;
@@ -114,15 +157,27 @@ export default function LinkedInIdeaPad() {
 
     const idea: IdeaItem = {
       id: Date.now().toString(),
-      title: newIdea.title,
-      content: newIdea.content,
-      category: newIdea.category || 'General',
+      ideaOrDraft: newIdea.ideaOrDraft,
+      postGoal: newIdea.postGoal,
+      tone: newIdea.tone,
+      targetAudience: newIdea.targetAudience,
+      keywords: newIdea.keywords,
+      preferredFormat: newIdea.preferredFormat,
+      additionalNotes: newIdea.additionalNotes,
       timestamp: new Date().toISOString(),
     };
 
     const updatedIdeas = [idea, ...ideas];
     saveIdeas(updatedIdeas);
-    setNewIdea({ title: '', content: '', category: '' });
+    setNewIdea({ 
+      ideaOrDraft: '', 
+      postGoal: '', 
+      tone: '', 
+      targetAudience: '', 
+      keywords: '', 
+      preferredFormat: '', 
+      additionalNotes: '' 
+    });
 
     // Trigger Make.com webhook
     await triggerMakeWebhook(idea);
@@ -208,39 +263,99 @@ export default function LinkedInIdeaPad() {
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
-              <Label htmlFor="title">Idea Title</Label>
-              <Input
-                id="title"
-                placeholder="What's your main point?"
-                value={newIdea.title}
-                onChange={(e) => setNewIdea({ ...newIdea, title: e.target.value })}
+              <Label htmlFor="ideaOrDraft">Idea or Raw Draft (required)</Label>
+              <Textarea
+                id="ideaOrDraft"
+                placeholder='Briefly describe what the post is about. e.g., "CTF takeaway", "DevSecOps lesson", "Why students underestimate X"'
+                value={newIdea.ideaOrDraft}
+                onChange={(e) => setNewIdea({ ...newIdea, ideaOrDraft: e.target.value })}
+                rows={3}
               />
             </div>
             
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="postGoal">Post Goal</Label>
+                <select
+                  id="postGoal"
+                  value={newIdea.postGoal}
+                  onChange={(e) => setNewIdea({ ...newIdea, postGoal: e.target.value })}
+                  className="w-full px-3 py-2 border border-input bg-card rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-ring z-50 relative"
+                >
+                  <option value="">Select post goal</option>
+                  {postGoals.map((goal) => (
+                    <option key={goal} value={goal}>{goal}</option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <Label htmlFor="tone">Tone</Label>
+                <select
+                  id="tone"
+                  value={newIdea.tone}
+                  onChange={(e) => setNewIdea({ ...newIdea, tone: e.target.value })}
+                  className="w-full px-3 py-2 border border-input bg-card rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-ring z-50 relative"
+                >
+                  <option value="">Select tone</option>
+                  {tones.map((tone) => (
+                    <option key={tone} value={tone}>{tone}</option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="targetAudience">Target Audience</Label>
+                <select
+                  id="targetAudience"
+                  value={newIdea.targetAudience}
+                  onChange={(e) => setNewIdea({ ...newIdea, targetAudience: e.target.value })}
+                  className="w-full px-3 py-2 border border-input bg-card rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-ring z-50 relative"
+                >
+                  <option value="">Select target audience</option>
+                  {targetAudiences.map((audience) => (
+                    <option key={audience} value={audience}>{audience}</option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <Label htmlFor="preferredFormat">Preferred Format</Label>
+                <select
+                  id="preferredFormat"
+                  value={newIdea.preferredFormat}
+                  onChange={(e) => setNewIdea({ ...newIdea, preferredFormat: e.target.value })}
+                  className="w-full px-3 py-2 border border-input bg-card rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-ring z-50 relative"
+                >
+                  <option value="">Select format</option>
+                  {preferredFormats.map((format) => (
+                    <option key={format} value={format}>{format}</option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
             <div>
-              <Label htmlFor="content">Content</Label>
-              <Textarea
-                id="content"
-                placeholder="Elaborate on your idea. What story will you tell? What insights will you share?"
-                value={newIdea.content}
-                onChange={(e) => setNewIdea({ ...newIdea, content: e.target.value })}
-                rows={4}
+              <Label htmlFor="keywords">Keywords or Hashtags (optional)</Label>
+              <Input
+                id="keywords"
+                placeholder="e.g., #cybersecurity #devsecops #CTF #studentlife"
+                value={newIdea.keywords}
+                onChange={(e) => setNewIdea({ ...newIdea, keywords: e.target.value })}
               />
             </div>
 
             <div>
-              <Label htmlFor="category">Category</Label>
-              <select
-                id="category"
-                value={newIdea.category}
-                onChange={(e) => setNewIdea({ ...newIdea, category: e.target.value })}
-                className="w-full px-3 py-2 border border-input bg-background rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-ring"
-              >
-                <option value="">Select a category</option>
-                {categories.map((cat) => (
-                  <option key={cat} value={cat}>{cat}</option>
-                ))}
-              </select>
+              <Label htmlFor="additionalNotes">Additional Notes (optional)</Label>
+              <Textarea
+                id="additionalNotes"
+                placeholder="Add context, links, or anything the AI should consider"
+                value={newIdea.additionalNotes}
+                onChange={(e) => setNewIdea({ ...newIdea, additionalNotes: e.target.value })}
+                rows={3}
+              />
             </div>
 
             <Button 
@@ -278,9 +393,11 @@ export default function LinkedInIdeaPad() {
                   <CardHeader>
                     <div className="flex items-start justify-between">
                       <div className="flex-1">
-                        <CardTitle className="text-lg">{idea.title}</CardTitle>
-                        <div className="flex items-center space-x-2 mt-2">
-                          <Badge variant="secondary">{idea.category}</Badge>
+                        <CardTitle className="text-lg line-clamp-2">{idea.ideaOrDraft}</CardTitle>
+                        <div className="flex items-center flex-wrap gap-2 mt-2">
+                          {idea.postGoal && <Badge variant="secondary">{idea.postGoal}</Badge>}
+                          {idea.tone && <Badge variant="outline">{idea.tone}</Badge>}
+                          {idea.targetAudience && <Badge className="bg-primary/10 text-primary hover:bg-primary/20">{idea.targetAudience}</Badge>}
                           <span className="text-sm text-muted-foreground">
                             {new Date(idea.timestamp).toLocaleDateString()}
                           </span>
@@ -292,6 +409,7 @@ export default function LinkedInIdeaPad() {
                           size="sm"
                           onClick={() => triggerMakeWebhook(idea)}
                           disabled={isLoading}
+                          title="Send to Make.com"
                         >
                           <ExternalLink className="h-4 w-4" />
                         </Button>
@@ -299,14 +417,34 @@ export default function LinkedInIdeaPad() {
                           variant="outline"
                           size="sm"
                           onClick={() => deleteIdea(idea.id)}
+                          title="Delete idea"
                         >
                           <Trash2 className="h-4 w-4" />
                         </Button>
                       </div>
                     </div>
                   </CardHeader>
-                  <CardContent>
-                    <p className="text-foreground/80 whitespace-pre-wrap">{idea.content}</p>
+                  <CardContent className="space-y-3">
+                    {idea.preferredFormat && (
+                      <div>
+                        <span className="text-sm font-medium text-muted-foreground">Format: </span>
+                        <span className="text-sm">{idea.preferredFormat}</span>
+                      </div>
+                    )}
+                    
+                    {idea.keywords && (
+                      <div>
+                        <span className="text-sm font-medium text-muted-foreground">Keywords: </span>
+                        <span className="text-sm text-primary">{idea.keywords}</span>
+                      </div>
+                    )}
+                    
+                    {idea.additionalNotes && (
+                      <div>
+                        <span className="text-sm font-medium text-muted-foreground">Notes: </span>
+                        <p className="text-sm text-foreground/80 whitespace-pre-wrap mt-1">{idea.additionalNotes}</p>
+                      </div>
+                    )}
                   </CardContent>
                 </Card>
               ))}
