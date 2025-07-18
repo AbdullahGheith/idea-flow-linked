@@ -5,9 +5,10 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
-import { Lightbulb, Send, Settings, Trash2, ExternalLink } from "lucide-react";
+import { Lightbulb, Send, Settings, Trash2, ExternalLink, Moon, Sun } from "lucide-react";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
+import { useTheme } from "next-themes";
 
 interface IdeaItem {
   id: string;
@@ -38,6 +39,7 @@ export default function LinkedInIdeaPad() {
   const [tempApiKey, setTempApiKey] = useState('');
   const [showApiKeyDialog, setShowApiKeyDialog] = useState(false);
   const { toast } = useToast();
+  const { theme, setTheme } = useTheme();
 
   // Form options
   const postGoals = [
@@ -295,6 +297,15 @@ export default function LinkedInIdeaPad() {
                 </div>
                 
                 <div className="flex items-center space-x-2">
+                  <Button 
+                    variant="secondary" 
+                    size="sm" 
+                    className="bg-white/20 backdrop-blur-sm border-white/20 text-white hover:bg-white/30"
+                    onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+                  >
+                    {theme === 'dark' ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+                  </Button>
+                  
                   <Button 
                     variant="secondary" 
                     size="sm" 
