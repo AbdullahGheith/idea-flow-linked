@@ -491,6 +491,15 @@ export default function LinkedInIdeaPad() {
                   size="sm" 
                   className="mt-2"
                   onClick={async () => {
+                    if (!newIdea.profile.trim()) {
+                      toast({
+                        title: "Profile Required",
+                        description: "Please select a profile before populating fields.",
+                        variant: "destructive",
+                      });
+                      return;
+                    }
+                    
                     try {
                       setIsLoading(true);
                       const response = await fetch('https://hook.eu2.make.com/2ypmffht4y8yurpeordogjbnrxldm52x', {
@@ -501,6 +510,7 @@ export default function LinkedInIdeaPad() {
                         },
                         body: JSON.stringify({
                           draftContent: newIdea.ideaOrDraft,
+                          profile: newIdea.profile,
                           timestamp: new Date().toISOString(),
                           source: "LinkedIn Idea Pad - Populate Fields"
                         }),
