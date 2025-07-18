@@ -16,6 +16,7 @@ interface IdeaItem {
   postGoal: string;
   tone: string;
   targetAudience: string;
+  segment?: string;
   keywords: string;
   preferredFormat: string;
   profile: string;
@@ -30,6 +31,7 @@ export default function LinkedInIdeaPad() {
     postGoal: '', 
     tone: '', 
     targetAudience: '', 
+    segment: '',
     keywords: '', 
     preferredFormat: '', 
     profile: '', 
@@ -66,6 +68,34 @@ export default function LinkedInIdeaPad() {
     'Tech-curious followers',
     'Newcomers to the field'
   ];
+
+  const mjmSegments = [
+    'Samarbejdspartner',
+    'Erhvervskunder', 
+    'Privatkunder'
+  ];
+
+  const mjmTargetAudiences = {
+    'Samarbejdspartner': [
+      'Ejendomsadministrator',
+      'Boligforening',
+      'Byggefirma',
+      'Entreprenører'
+    ],
+    'Erhvervskunder': [
+      'Virksomhed',
+      'Kontorbygninger',
+      'Hoteller & Restauranter',
+      'Butikker & Showrooms'
+    ],
+    'Privatkunder': [
+      'Renoveringsprojekt',
+      'Lejlighedsejere',
+      'Nybyg',
+      'Flyttelejlighed',
+      'Sommerhus'
+    ]
+  };
 
   const creativeFormats = [
     'AI can choose',
@@ -167,6 +197,7 @@ export default function LinkedInIdeaPad() {
           postGoal: idea.postGoal,
           tone: idea.tone,
           targetAudience: idea.targetAudience,
+          segment: idea.segment,
           keywords: idea.keywords,
           preferredFormat: idea.preferredFormat,
           profile: idea.profile,
@@ -233,6 +264,7 @@ export default function LinkedInIdeaPad() {
       postGoal: newIdea.postGoal,
       tone: newIdea.tone,
       targetAudience: newIdea.targetAudience,
+      segment: newIdea.segment,
       keywords: newIdea.keywords,
       preferredFormat: newIdea.preferredFormat,
       profile: newIdea.profile,
@@ -247,6 +279,7 @@ export default function LinkedInIdeaPad() {
       postGoal: '', 
       tone: '', 
       targetAudience: '', 
+      segment: '',
       keywords: '', 
       preferredFormat: '', 
       profile: '', 
@@ -396,6 +429,30 @@ export default function LinkedInIdeaPad() {
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
+              <Label htmlFor="profile">Profile (required)</Label>
+              <select
+                id="profile"
+                value={newIdea.profile}
+                onChange={(e) => {
+                  const newProfile = e.target.value;
+                  setNewIdea({ 
+                    ...newIdea, 
+                    profile: newProfile,
+                    // Reset dependent fields when profile changes
+                    targetAudience: '',
+                    segment: ''
+                  });
+                }}
+                className="w-full px-3 py-2 border border-input bg-card rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-ring z-50 relative"
+              >
+                <option value="">Select profile</option>
+                {profiles.map((profile) => (
+                  <option key={profile} value={profile}>{profile}</option>
+                ))}
+              </select>
+            </div>
+
+            <div>
               <Label htmlFor="ideaOrDraft">Idea or Raw Draft (required)</Label>
               <Textarea
                 id="ideaOrDraft"
@@ -439,20 +496,55 @@ export default function LinkedInIdeaPad() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="targetAudience">Target Audience</Label>
-                <select
-                  id="targetAudience"
-                  value={newIdea.targetAudience}
-                  onChange={(e) => setNewIdea({ ...newIdea, targetAudience: e.target.value })}
-                  className="w-full px-3 py-2 border border-input bg-card rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-ring z-50 relative"
-                >
-                  <option value="">Select target audience</option>
-                  {targetAudiences.map((audience) => (
-                    <option key={audience} value={audience}>{audience}</option>
-                  ))}
-                </select>
-              </div>
+              {newIdea.profile === 'MJM' ? (
+                <>
+                  <div>
+                    <Label htmlFor="segment">Segment</Label>
+                    <select
+                      id="segment"
+                      value={newIdea.segment}
+                      onChange={(e) => setNewIdea({ ...newIdea, segment: e.target.value, targetAudience: '' })}
+                      className="w-full px-3 py-2 border border-input bg-card rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-ring z-50 relative"
+                    >
+                      <option value="">Select segment</option>
+                      {mjmSegments.map((segment) => (
+                        <option key={segment} value={segment}>{segment}</option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div>
+                    <Label htmlFor="targetAudience">Target Audience</Label>
+                    <select
+                      id="targetAudience"
+                      value={newIdea.targetAudience}
+                      onChange={(e) => setNewIdea({ ...newIdea, targetAudience: e.target.value })}
+                      className="w-full px-3 py-2 border border-input bg-card rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-ring z-50 relative"
+                      disabled={!newIdea.segment}
+                    >
+                      <option value="">Select target audience</option>
+                      {newIdea.segment && mjmTargetAudiences[newIdea.segment as keyof typeof mjmTargetAudiences]?.map((audience) => (
+                        <option key={audience} value={audience}>{audience}</option>
+                      ))}
+                    </select>
+                  </div>
+                </>
+              ) : (
+                <div>
+                  <Label htmlFor="targetAudience">Target Audience</Label>
+                  <select
+                    id="targetAudience"
+                    value={newIdea.targetAudience}
+                    onChange={(e) => setNewIdea({ ...newIdea, targetAudience: e.target.value })}
+                    className="w-full px-3 py-2 border border-input bg-card rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-ring z-50 relative"
+                  >
+                    <option value="">Select target audience</option>
+                    {targetAudiences.map((audience) => (
+                      <option key={audience} value={audience}>{audience}</option>
+                    ))}
+                  </select>
+                </div>
+              )}
 
               <div>
                 <Label htmlFor="preferredFormat">Creative Format</Label>
@@ -465,23 +557,6 @@ export default function LinkedInIdeaPad() {
                   <option value="">Select format</option>
                   {creativeFormats.map((format) => (
                     <option key={format} value={format}>{format}</option>
-                  ))}
-                </select>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="profile">Profile (required)</Label>
-                <select
-                  id="profile"
-                  value={newIdea.profile}
-                  onChange={(e) => setNewIdea({ ...newIdea, profile: e.target.value })}
-                  className="w-full px-3 py-2 border border-input bg-card rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-ring z-50 relative"
-                >
-                  <option value="">Select profile</option>
-                  {profiles.map((profile) => (
-                    <option key={profile} value={profile}>{profile}</option>
                   ))}
                 </select>
               </div>
@@ -548,6 +623,7 @@ export default function LinkedInIdeaPad() {
                            {idea.postGoal && <Badge variant="secondary">{idea.postGoal}</Badge>}
                            {idea.tone && <Badge variant="outline">{idea.tone}</Badge>}
                            {idea.targetAudience && <Badge className="bg-primary/10 text-primary hover:bg-primary/20">{idea.targetAudience}</Badge>}
+                           {idea.segment && <Badge variant="outline">{idea.segment}</Badge>}
                            {idea.profile && <Badge className="bg-accent text-accent-foreground">{idea.profile}</Badge>}
                            <span className="text-sm text-muted-foreground">
                              {new Date(idea.timestamp).toLocaleDateString()}
