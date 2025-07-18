@@ -34,6 +34,9 @@ export default function LinkedInIdeaPad() {
   });
   const [webhookUrl, setWebhookUrl] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [apiKey, setApiKey] = useState('');
+  const [tempApiKey, setTempApiKey] = useState('');
+  const [showApiKeyDialog, setShowApiKeyDialog] = useState(false);
   const { toast } = useToast();
 
   // Form options
@@ -73,12 +76,18 @@ export default function LinkedInIdeaPad() {
   useEffect(() => {
     const savedIdeas = localStorage.getItem('linkedin-ideas');
     const savedWebhook = localStorage.getItem('make-webhook-url');
+    const savedApiKey = localStorage.getItem('linkedin-pad-api-key');
     
     if (savedIdeas) {
       setIdeas(JSON.parse(savedIdeas));
     }
     if (savedWebhook) {
       setWebhookUrl(savedWebhook);
+    }
+    if (savedApiKey) {
+      setApiKey(savedApiKey);
+    } else {
+      setShowApiKeyDialog(true);
     }
   }, []);
 
@@ -92,6 +101,36 @@ export default function LinkedInIdeaPad() {
   const saveWebhookUrl = (url: string) => {
     setWebhookUrl(url);
     localStorage.setItem('make-webhook-url', url);
+  };
+
+  // Save API key
+  const saveApiKey = () => {
+    if (!tempApiKey.trim()) {
+      toast({
+        title: "API Key Required",
+        description: "Please enter your API key to continue.",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    setApiKey(tempApiKey);
+    localStorage.setItem('linkedin-pad-api-key', tempApiKey);
+    setShowApiKeyDialog(false);
+    setTempApiKey('');
+    
+    toast({
+      title: "API Key Saved",
+      description: "Your API key has been saved successfully.",
+    });
+  };
+
+  // Clear API key and show dialog
+  const reenterApiKey = () => {
+    setApiKey('');
+    setTempApiKey('');
+    localStorage.removeItem('linkedin-pad-api-key');
+    setShowApiKeyDialog(true);
   };
 
   // Trigger Make.com webhook
@@ -115,6 +154,7 @@ export default function LinkedInIdeaPad() {
         },
         mode: "no-cors",
         body: JSON.stringify({
+          apiKey: apiKey,
           ideaOrDraft: idea.ideaOrDraft,
           postGoal: idea.postGoal,
           tone: idea.tone,
@@ -200,56 +240,106 @@ export default function LinkedInIdeaPad() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-accent/20 to-background">
-      {/* Header */}
-      <div className="bg-gradient-hero shadow-elegant">
-        <div className="container mx-auto px-4 py-6">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-3">
-              <div className="p-2 bg-white/20 rounded-lg backdrop-blur-sm">
-                <Lightbulb className="h-8 w-8 text-white" />
+    <>
+      {/* API Key Dialog */}
+      <Dialog open={showApiKeyDialog} onOpenChange={() => {}}>
+        <DialogContent className="sm:max-w-md" onPointerDownOutside={(e) => e.preventDefault()}>
+          <DialogHeader>
+            <DialogTitle className="flex items-center space-x-2">
+              <div className="p-2 bg-primary/10 rounded-lg">
+                <Lightbulb className="h-5 w-5 text-primary" />
               </div>
-              <div>
-                <h1 className="text-2xl font-bold text-white">LinkedIn Idea Pad</h1>
-                <p className="text-white/80">Capture ideas and trigger Make.com automations</p>
+              <span>LinkedIn Idea Pad - API Key Required</span>
+            </DialogTitle>
+            <DialogDescription>
+              Please enter your API key to access the LinkedIn Idea Pad. Your key will be saved locally for future use.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div>
+              <Label htmlFor="apikey">API Key</Label>
+              <Input
+                id="apikey"
+                type="password"
+                placeholder="Enter your API key..."
+                value={tempApiKey}
+                onChange={(e) => setTempApiKey(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && saveApiKey()}
+              />
+            </div>
+            <Button 
+              onClick={saveApiKey} 
+              className="w-full bg-gradient-primary hover:shadow-glow transition-all duration-300"
+            >
+              Save API Key & Continue
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Main Application - only show when API key exists */}
+      {apiKey && (
+        <div className="min-h-screen bg-gradient-to-br from-background via-accent/20 to-background">
+          {/* Header */}
+          <div className="bg-gradient-hero shadow-elegant">
+            <div className="container mx-auto px-4 py-6">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-3">
+                  <div className="p-2 bg-white/20 rounded-lg backdrop-blur-sm">
+                    <Lightbulb className="h-8 w-8 text-white" />
+                  </div>
+                  <div>
+                    <h1 className="text-2xl font-bold text-white">LinkedIn Idea Pad</h1>
+                    <p className="text-white/80">Capture ideas and trigger Make.com automations</p>
+                  </div>
+                </div>
+                
+                <div className="flex items-center space-x-2">
+                  <Button 
+                    variant="secondary" 
+                    size="sm" 
+                    className="bg-white/20 backdrop-blur-sm border-white/20 text-white hover:bg-white/30"
+                    onClick={reenterApiKey}
+                  >
+                    Change API Key
+                  </Button>
+                  
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <Button variant="secondary" size="sm" className="bg-white/20 backdrop-blur-sm border-white/20 text-white hover:bg-white/30">
+                        <Settings className="h-4 w-4 mr-2" />
+                        Settings
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent>
+                      <DialogHeader>
+                        <DialogTitle>Make.com Integration Settings</DialogTitle>
+                        <DialogDescription>
+                          Configure your Make.com webhook URL to automatically trigger flows when you add new ideas.
+                        </DialogDescription>
+                      </DialogHeader>
+                      <div className="space-y-4">
+                        <div>
+                          <Label htmlFor="webhook">Make.com Webhook URL</Label>
+                          <Input
+                            id="webhook"
+                            placeholder="https://hook.make.com/..."
+                            value={webhookUrl}
+                            onChange={(e) => saveWebhookUrl(e.target.value)}
+                          />
+                        </div>
+                        <p className="text-sm text-muted-foreground">
+                          Create a webhook trigger in Make.com and paste the URL here. Your ideas will be automatically sent to your Make.com scenario.
+                        </p>
+                      </div>
+                    </DialogContent>
+                  </Dialog>
+                </div>
               </div>
             </div>
-            
-            <Dialog>
-              <DialogTrigger asChild>
-                <Button variant="secondary" size="sm" className="bg-white/20 backdrop-blur-sm border-white/20 text-white hover:bg-white/30">
-                  <Settings className="h-4 w-4 mr-2" />
-                  Settings
-                </Button>
-              </DialogTrigger>
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle>Make.com Integration Settings</DialogTitle>
-                  <DialogDescription>
-                    Configure your Make.com webhook URL to automatically trigger flows when you add new ideas.
-                  </DialogDescription>
-                </DialogHeader>
-                <div className="space-y-4">
-                  <div>
-                    <Label htmlFor="webhook">Make.com Webhook URL</Label>
-                    <Input
-                      id="webhook"
-                      placeholder="https://hook.make.com/..."
-                      value={webhookUrl}
-                      onChange={(e) => saveWebhookUrl(e.target.value)}
-                    />
-                  </div>
-                  <p className="text-sm text-muted-foreground">
-                    Create a webhook trigger in Make.com and paste the URL here. Your ideas will be automatically sent to your Make.com scenario.
-                  </p>
-                </div>
-              </DialogContent>
-            </Dialog>
           </div>
-        </div>
-      </div>
 
-      <div className="container mx-auto px-4 py-8">
+          <div className="container mx-auto px-4 py-8">
         {/* Add New Idea Form */}
         <Card className="mb-8 shadow-card border-0 bg-gradient-card">
           <CardHeader>
@@ -449,9 +539,11 @@ export default function LinkedInIdeaPad() {
                 </Card>
               ))}
             </div>
-          )}
+            )}
+          </div>
+          </div>
         </div>
-      </div>
-    </div>
+      )}
+    </>
   );
 }
