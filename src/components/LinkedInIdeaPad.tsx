@@ -517,9 +517,24 @@ export default function LinkedInIdeaPad() {
                       });
 
                       if (response.ok) {
+                        const data = await response.json();
+                        
+                        // Update form fields based on the response
+                        setNewIdea(prev => ({
+                          ...prev,
+                          postGoal: data.goal || prev.postGoal,
+                          tone: data.tone || prev.tone,
+                          targetAudience: data.audience || prev.targetAudience,
+                          segment: data.segment || prev.segment,
+                          theme: data.theme || prev.theme,
+                          preferredFormat: data.creative_format || prev.preferredFormat,
+                          keywords: data.keywords || prev.keywords,
+                          additionalNotes: data.additional_notes || prev.additionalNotes,
+                        }));
+
                         toast({
-                          title: "Content Sent",
-                          description: "Draft content sent to Make.com for field population.",
+                          title: "Fields Populated",
+                          description: "Form fields have been automatically filled based on your content.",
                         });
                       } else {
                         toast({
